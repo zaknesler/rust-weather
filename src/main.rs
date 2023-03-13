@@ -78,7 +78,19 @@ async fn main() -> anyhow::Result<()> {
                 .map(|w| w.get_emoji())
                 .flatten()
                 .unwrap_or("");
+
+            let temp = match data.main.temp {
+                Some(val) => val,
+                None => 0f64,
+            };
+
+            let feels_like = match data.main.feels_like {
+                Some(val) => val,
+                None => 0f64,
+            };
+
             println!("Weather in {}: {} {}", city, weather, emoji);
+            println!("    {}F (feels like {}F)", temp, feels_like);
         }
         _ => {}
     }
