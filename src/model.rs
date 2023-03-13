@@ -40,15 +40,15 @@ pub struct Weather {
 impl Weather {
     pub fn get_emoji(&self) -> Option<&str> {
         match self.icon.as_str() {
-            "01n" => Some("☀️"),
-            "02n" => Some("🌤️"),
-            "03n" => Some("☁️"),
-            "04n" => Some("☁️"),
-            "09n" => Some("🌧️"),
-            "10n" => Some("🌧️"),
-            "11n" => Some("⛈️"),
-            "13n" => Some("❄️"),
-            "50n" => Some("🌫️"),
+            "01n" | "01d" => Some("☀️"),
+            "02n" | "02d" => Some("🌤️"),
+            "03n" | "03d" => Some("☁️"),
+            "04n" | "04d" => Some("☁️"),
+            "09n" | "09d" => Some("🌧️"),
+            "10n" | "10d" => Some("🌧️"),
+            "11n" | "11d" => Some("⛈️"),
+            "13n" | "13d" => Some("❄️"),
+            "50n" | "50d" => Some("🌫️"),
             _ => None,
         }
     }

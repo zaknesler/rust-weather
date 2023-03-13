@@ -2,12 +2,18 @@ use crate::model::WeatherResponse;
 
 #[derive(Default)]
 pub struct WeatherClient {
+    api_key: String,
     client: Option<reqwest::Client>,
 }
 
-const API_KEY: &str = "[redacted]";
-
 impl WeatherClient {
+    pub fn new(api_key: String) -> Self {
+        Self {
+            api_key,
+            ..Default::default()
+        }
+    }
+
     pub fn init_client(&mut self) -> anyhow::Result<()> {
         let client = reqwest::Client::builder().build()?;
         self.client = Some(client);
@@ -21,9 +27,11 @@ impl WeatherClient {
 
         let url = format!(
             "https://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid={}",
-            lat, long, API_KEY
+            lat, long, self.api_key
         );
         let res = reqwest::get(url).await?.text().await?;
+
+        tracing::debug!("Weather response: {}", res);
 
         serde_json::from_str::<WeatherResponse>(res.as_str()).map_err(|err| anyhow::anyhow!(err))
     }

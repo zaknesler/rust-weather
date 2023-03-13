@@ -18,6 +18,13 @@ fn cli() -> Command {
                 .about("Fetch and print the weather"),
         )
         .arg(
+            arg!(--key <KEY>)
+                .short('k')
+                .help("API key for OpenWeatherMap")
+                .number_of_values(1)
+                .required(true),
+        )
+        .arg(
             arg!(--log <LEVEL>)
                 .short('l')
                 .help("Override log level")
@@ -43,9 +50,11 @@ async fn main() -> anyhow::Result<()> {
         .finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
+    let api_key = matches.get_one::<String>("key").unwrap();
+
     match matches.subcommand() {
         Some(("weather", sub_matches)) => {
-            let mut client = weather::WeatherClient::default();
+            let mut client = weather::WeatherClient::new(api_key.to_string());
             client.init_client()?;
 
             let lat = sub_matches
@@ -68,8 +77,8 @@ async fn main() -> anyhow::Result<()> {
                 .first()
                 .map(|w| w.get_emoji())
                 .flatten()
-                .unwrap();
-            tracing::info!("Weather in {}: {} {}", city, weather, emoji);
+                .unwrap_or("");
+            println!("Weather in {}: {} {}", city, weather, emoji);
         }
         _ => {}
     }
